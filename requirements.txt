@@ -1,0 +1,5 @@
+aiogram~=2.18
+pyowm~=3.2.0
+feedparser~=6.0.8
+requests~=2.27.1
+beautifulsoup4~=4.10.0

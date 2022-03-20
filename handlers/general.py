@@ -17,7 +17,8 @@ class Work_(StatesGroup):
 async def start(message: types.Message):
     await bot.send_message(
         chat_id=message.chat.id,
-        text=f'Привет, @{message.from_user.username}\n',
+        text=f'Привет, @{message.from_user.username}\n'
+             f' 〰️〰️〰️ Объявление 〰️〰️〰️',
         parse_mode='HTML',
         reply_markup=kb_client
     )
@@ -210,13 +211,13 @@ async def design_set(message: types.Message, state: FSMContext):
 
 def register_handlers_commands(dp: Dispatcher):
     dp.register_message_handler(start, Text(equals=['/start', '🔃 Обновить']))
-    dp.register_message_handler(news, Text(equals=['📰 Новости']))
-    dp.register_message_handler(my_bots, Text(equals=['⚙️ Администрирование']))
-    dp.register_message_handler(support, Text(equals=['👽️ Поддержка']))
-    dp.register_message_handler(scripts, Text(equals=['💡 Скрипты']))
-    dp.register_message_handler(back, Text(equals=['Назад']))
-    dp.register_message_handler(getid, Text(equals=['Получить ID']))
-    dp.register_message_handler(work, Text(equals=['💵 Услуги']))
-    dp.register_message_handler(design, Text(equals=['Заказать дизайн']))
-    dp.register_message_handler(develop, Text(equals=['Заказать разработку бота']))
-    dp.register_message_handler(reviews, Text(equals=['🤝🏻 Отзывы']))
+    dp.register_message_handler(news, Text(equals=['/news', '📰 Новости']))
+    dp.register_message_handler(my_bots, Text(equals=['/my_bots', '⚙️ Администрирование']))
+    dp.register_message_handler(support, Text(equals=['/support', '👽️ Поддержка']))
+    dp.register_message_handler(scripts, Text(equals=['/scripts', '💡 Скрипты']))
+    dp.register_message_handler(back, Text(equals=['/back', 'Назад']))
+    dp.register_message_handler(getid, Text(equals=['/getid', 'Получить ID']))
+    dp.register_message_handler(work, Text(equals=['/work', '💵 Услуги']))
+    dp.register_message_handler(design, Text(equals=['/design', 'Заказать дизайн']))
+    dp.register_message_handler(develop, Text(equals=['/develop', 'Заказать разработку бота']))
+    dp.register_message_handler(reviews, Text(equals=['/reviews', '🤝🏻 Отзывы']))

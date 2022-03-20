@@ -13,13 +13,46 @@ import config
 class Work_(StatesGroup):
     design_ = State()
     develop_ = State()
+    send_adm = State()
+
+
+async def send_adm(message: types.Message):
+    if message.from_user.id == config.ID:
+        await bot.send_message(
+            chat_id=config.ID,
+            text='Жду сообщения'
+        )
+        await Work_.send_adm.set()
+
+
+
+@dp.message_handler(state=Work_.send_adm)
+async def design_set(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['send_adm'] = message.text
+        data = dict(data)
+        data = data['send_adm']
+        print (data)
+        if data == '!s':
+            await state.finish()
+            await bot.send_message(
+                chat_id=message.chat.id,
+                text='Отмена объявления пользователям'
+            )
+            await state.finish()
+        else:
+            await bot.send_message(
+                chat_id=message.chat.id,
+                text=f'{data}'
+            )
 
 async def start(message: types.Message):
     await bot.send_message(
         chat_id=message.chat.id,
         text=f'Привет, @{message.from_user.username}\n'
-             f' 〰️〰️〰️ Объявление 〰️〰️〰️',
-        parse_mode='HTML',
+             f' 〰️〰️〰️ Объявление 〰️〰️〰️\n'
+             f'*Пока здесь ничего нет*',
+        parse_mode=types.ParseMode.MARKDOWN_V2,
         reply_markup=kb_client
     )
     await bot.send_sticker(
@@ -147,7 +180,7 @@ async def design_set(message: types.Message, state: FSMContext):
             f'📌 Разработка дизайна\n'
             f'📰 Никнейм: @{message.from_user.username} \\| ID: {message.from_user.id}\n'
             f'📌 Ссылка на ТЗ: [Перейти]({data})\n'
-            f'💵 Цена услуги: **Неизвестно**\n\n', # todo
+            f'💵 Цена услуги: *Неизвестно*\n\n', # todo
             parse_mode=types.ParseMode.MARKDOWN_V2,
             reply_markup=kb_support
         )
@@ -156,13 +189,13 @@ async def design_set(message: types.Message, state: FSMContext):
             text=f'📌 Разработка дизайна\n'
             f'📰 Никнейм: @{message.from_user.username} \\| ID: {message.from_user.id}\n'
             f'📌 Ссылка на ТЗ: [Перейти]({data})\n'
-            f'💵 Цена услуги: **Неизвестно**',  # todo
+            f'💵 Цена услуги: *Неизвестно*',  # todo
             parse_mode=types.ParseMode.MARKDOWN_V2
         )
     else:
         await bot.send_message(
             chat_id=message.chat.id,
-            text=f'Ссылка должна быть строго на файл в **Google Drive\\!**',
+            text=f'Ссылка должна быть строго на файл в *Google Drive\\!*',
             parse_mode=types.ParseMode.MARKDOWN_V2
         )
         await state.finish()
@@ -188,7 +221,7 @@ async def design_set(message: types.Message, state: FSMContext):
             f'📌 Разработка бота\n'
             f'📰 Никнейм: @{message.from_user.username} \\| ID: {message.from_user.id}\n'
             f'📌 Ссылка на ТЗ: [Перейти]({data})\n'
-            f'💵 Цена услуги: **Неизвестно**', # todo
+            f'💵 Цена услуги: *Неизвестно*', # todo
             parse_mode=types.ParseMode.MARKDOWN_V2,
             reply_markup=kb_support
         )
@@ -197,16 +230,17 @@ async def design_set(message: types.Message, state: FSMContext):
             text=f'📌 Разработка дизайна\n'
             f'📰 Никнейм: @{message.from_user.username} \\| ID: {message.from_user.id}\n'
             f'📌 Ссылка на ТЗ: [Перейти]({data})\n'
-            f'💵 Цена услуги: **Неизвестно**\n\n',  # todo
+            f'💵 Цена услуги: *Неизвестно*\n\n',  # todo
             parse_mode=types.ParseMode.MARKDOWN_V2
         )
     else:
         await bot.send_message(
             chat_id=message.chat.id,
-            text=f'Ссылка должна быть строго на файл в **Google Drive\\!**',
+            text=f'Ссылка должна быть строго на файл в *Google Drive\\!*',
             parse_mode=types.ParseMode.MARKDOWN_V2
         )
         await state.finish()
+
 
 
 def register_handlers_commands(dp: Dispatcher):
@@ -221,3 +255,4 @@ def register_handlers_commands(dp: Dispatcher):
     dp.register_message_handler(design, Text(equals=['/design', 'Заказать дизайн']))
     dp.register_message_handler(develop, Text(equals=['/develop', 'Заказать разработку бота']))
     dp.register_message_handler(reviews, Text(equals=['/reviews', '🤝🏻 Отзывы']))
+    dp.register_message_handler(send_adm, Text(equals=['!a']))

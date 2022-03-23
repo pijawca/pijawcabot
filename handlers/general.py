@@ -6,8 +6,9 @@ from aiogram.dispatcher.filters import Text
 from aiogram import types
 from misc import bot, dp
 from handlers import some
-from handlers.keyboard import kb_client, kb_support, kb_scripts, kb_work, kb_reviews
+from handlers.keyboard import kb_client, kb_support, kb_scripts, kb_work, kb_reviews, kb_admin
 import config
+import sqlite3
 
 
 class Work_(StatesGroup):
@@ -15,36 +16,10 @@ class Work_(StatesGroup):
     develop_ = State()
     send_adm = State()
 
-
-async def send_adm(message: types.Message):
-    if message.from_user.id == config.ID:
-        await bot.send_message(
-            chat_id=config.ID,
-            text='Жду сообщения'
-        )
-        await Work_.send_adm.set()
-
-
-
-@dp.message_handler(state=Work_.send_adm)
-async def design_set(message: types.Message, state: FSMContext):
-    async with state.proxy() as data:
-        data['send_adm'] = message.text
-        data = dict(data)
-        data = data['send_adm']
-        print (data)
-        if data == '!s':
-            await state.finish()
-            await bot.send_message(
-                chat_id=message.chat.id,
-                text='Отмена объявления пользователям'
-            )
-            await state.finish()
-        else:
-            await bot.send_message(
-                chat_id=message.chat.id,
-                text=f'{data}'
-            )
+connection = sqlite3.connect("users.db")
+cursor = connection.cursor()
+cursor.execute("CREATE TABLE IF NOT EXISTS users (id TEXT, username TEXT, link TEXT)")
+connection.commit()
 
 async def start(message: types.Message):
     await bot.send_message(
@@ -81,20 +56,13 @@ async def news(message: types.Message):
         sticker=r'CAACAgIAAxkBAAEEMqViNE_lESi_oz_Etgq6B3L6O2stjgAC6BIAAo9u0EvIU4PvGEDl0yME'
     )
 
-async def my_bots(message: types.Message):
+async def admin(message: types.Message):
     if message.from_user.id == config.ID:
         await bot.send_message(
             chat_id=message.chat.id,
-            text=(f'〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️\n'
-                  f'💻 @radiophonebot\n'
-                  f'#️⃣ <code>5228167605:AAHgEzuC80jt2EMWn6owB96YtbDMsP-e0K4</code>\n\n'
-                  f'💻 @showmehidebot\n'
-                  f'#️⃣ <code>2079326037:AAE4x1tE58fyCDHQjyjGPaOZ1EYHRxl2jpY</code>\n\n'
-                  f'💻 @test_pijawcabot\n'
-                  f'#️⃣ <code>2078270004:AAEIbZcpLyPpCge3x6wILYh5b2odZ9LrL2w</code>\n'
-                  f'〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️'
-            ),
-            parse_mode=types.ParseMode.HTML
+            text='Вы в ⚙️ <strong>Администрировании</strong>',
+            parse_mode=types.ParseMode.HTML,
+            reply_markup=kb_admin
         )
         await bot.send_sticker(
             chat_id=message.chat.id,
@@ -103,8 +71,57 @@ async def my_bots(message: types.Message):
     else:
         await bot.send_message(
             chat_id=message.chat.id,
-            text=('Сорян братик, кодер сказал что сюда никого не впускать(')
+            text='Сорян братик, кодер сказал что сюда никого не впускать('
         )
+
+async def status_bot(message: types.Message):
+    if message.from_user.id == config.ID:
+        await bot.send_message(
+            chat_id=message.chat.id,
+            text=f'〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️\n'
+                  f'💻 @radiophonebot\n'
+                  f'#️⃣ <code>5228167605:AAHgEzuC80jt2EMWn6owB96YtbDMsP-e0K4</code>\n\n'
+                  f'💻 @showmehidebot\n'
+                  f'#️⃣ <code>2079326037:AAE4x1tE58fyCDHQjyjGPaOZ1EYHRxl2jpY</code>\n\n'
+                  f'💻 @test_pijawcabot\n'
+                  f'#️⃣ <code>2078270004:AAEIbZcpLyPpCge3x6wILYh5b2odZ9LrL2w</code>\n'
+                  f'〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️',
+            parse_mode=types.ParseMode.HTML
+        )
+        await bot.send_sticker(
+            chat_id=message.chat.id,
+            sticker=r'CAACAgIAAxkBAAEENL9iNYUmVoqgw0qcQo2DIP128JkzqgACdxcAAuvA-Uu2duhg_nfSDSME'
+        )
+    else:
+        pass
+
+async def send_adm(message: types.Message):
+    if message.from_user.id == config.ID:
+        await bot.send_message(
+            chat_id=config.ID,
+            text='Жду сообщения',
+        )
+        await Work_.send_adm.set()
+
+@dp.message_handler(state=Work_.send_adm)
+async def design_set(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['send_adm'] = message.text
+        data = dict(data)
+        data = data['send_adm']
+        if data == '!s':
+            await state.finish()
+            await bot.send_message(
+                chat_id=message.chat.id,
+                text='Отмена объявления пользователям'
+            )
+            await state.finish()
+        else:
+            await bot.send_message(
+                chat_id=message.chat.id,
+                text=f'{data}'
+            )
+            await state.finish()
 
 async def support(message: types.Message):
     await bot.send_message(
@@ -174,7 +191,6 @@ async def design_set(message: types.Message, state: FSMContext):
             data['design_set'] = message.text
             data = dict(data)
             data = data['design_set']
-            await state.finish()
         await message.reply(
             text=f'Заявка создана, ожидайте ответа от исполнителя\\.\n\n'
             f'📌 Разработка дизайна\n'
@@ -182,15 +198,25 @@ async def design_set(message: types.Message, state: FSMContext):
             f'📌 Ссылка на ТЗ: [Перейти]({data})\n'
             f'💵 Цена услуги: *Неизвестно*\n\n', # todo
             parse_mode=types.ParseMode.MARKDOWN_V2,
-            reply_markup=kb_support
+            reply_markup=kb_support,
+            disable_web_page_preview=True
         )
+        cursor.execute("INSERT INTO users VALUES (?, ?, ?)", (message.from_user.id, message.from_user.username, data,))
+        connection.commit()
+        cursor.execute("SELECT * FROM users WHERE id>0 ORDER BY id LIMIT 1")
+        await state.finish()
+        name = cursor.execute("SELECT username FROM users").fetchall()[0]
+        name = ''.join(name)
+        id = cursor.execute("SELECT id FROM users").fetchall()[0]
+        id = ''.join(id)
         await bot.send_message(
             chat_id=config.ID,
             text=f'📌 Разработка дизайна\n'
-            f'📰 Никнейм: @{message.from_user.username} \\| ID: {message.from_user.id}\n'
+            f'📰 Никнейм: @{name} \\| ID: {id}\n'
             f'📌 Ссылка на ТЗ: [Перейти]({data})\n'
             f'💵 Цена услуги: *Неизвестно*',  # todo
-            parse_mode=types.ParseMode.MARKDOWN_V2
+            parse_mode=types.ParseMode.MARKDOWN_V2,
+            disable_web_page_preview=True
         )
     else:
         await bot.send_message(
@@ -209,13 +235,13 @@ async def develop(message: types.Message):
     await Work_.develop_.set()
 
 @dp.message_handler(state=Work_.develop_)
-async def design_set(message: types.Message, state: FSMContext):
+async def develop_set(message: types.Message, state: FSMContext):
     if message.text.startswith('https://docs.google.com/document/d'):
         async with state.proxy() as data:
             data['develop_set'] = message.text
             data = dict(data)
             data = data['develop_set']
-            await state.finish()
+            username = message.from_user.username
         await message.reply(
             text=f'Заявка создана, ожидайте ответа от исполнителя\\.\n\n'
             f'📌 Разработка бота\n'
@@ -225,10 +251,18 @@ async def design_set(message: types.Message, state: FSMContext):
             parse_mode=types.ParseMode.MARKDOWN_V2,
             reply_markup=kb_support
         )
+        cursor.execute("INSERT INTO users VALUES (?, ?, ?)", (message.from_user.id, message.from_user.username, data,))
+        connection.commit()
+        cursor.execute("SELECT * FROM users WHERE id>0 ORDER BY id LIMIT 1")
+        await state.finish()
+        name = cursor.execute("SELECT username FROM users").fetchall()[0]
+        name = ''.join(name)
+        id = cursor.execute("SELECT id FROM users").fetchall()[0]
+        id = ''.join(id)
         await bot.send_message(
             chat_id=config.ID,
             text=f'📌 Разработка дизайна\n'
-            f'📰 Никнейм: @{message.from_user.username} \\| ID: {message.from_user.id}\n'
+            f'📰 Никнейм: @{name} \\| ID: {id}\n'
             f'📌 Ссылка на ТЗ: [Перейти]({data})\n'
             f'💵 Цена услуги: *Неизвестно*\n\n',  # todo
             parse_mode=types.ParseMode.MARKDOWN_V2
@@ -246,7 +280,7 @@ async def design_set(message: types.Message, state: FSMContext):
 def register_handlers_commands(dp: Dispatcher):
     dp.register_message_handler(start, Text(equals=['/start', '🔃 Обновить']))
     dp.register_message_handler(news, Text(equals=['/news', '📰 Новости']))
-    dp.register_message_handler(my_bots, Text(equals=['/my_bots', '⚙️ Администрирование']))
+    dp.register_message_handler(admin, Text(equals=['/admin', '⚙️ Администрирование']))
     dp.register_message_handler(support, Text(equals=['/support', '👽️ Поддержка']))
     dp.register_message_handler(scripts, Text(equals=['/scripts', '💡 Скрипты']))
     dp.register_message_handler(back, Text(equals=['/back', 'Назад']))
@@ -255,4 +289,5 @@ def register_handlers_commands(dp: Dispatcher):
     dp.register_message_handler(design, Text(equals=['/design', 'Заказать дизайн']))
     dp.register_message_handler(develop, Text(equals=['/develop', 'Заказать разработку бота']))
     dp.register_message_handler(reviews, Text(equals=['/reviews', '🤝🏻 Отзывы']))
-    dp.register_message_handler(send_adm, Text(equals=['!a']))
+    dp.register_message_handler(send_adm, Text(equals=['!a', '🕳️ Отправка сообщения']))
+    dp.register_message_handler(status_bot, Text(equals=['/status', '🔧️ Статус ботов']))

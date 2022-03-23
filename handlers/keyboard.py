@@ -30,6 +30,3 @@ kb_admin = ReplyKeyboardMarkup(resize_keyboard=True)
 kb_admin.add(a12).add(a13).add(back)
 kb_reviews = InlineKeyboardMarkup().insert(reviews)
 kb_support = InlineKeyboardMarkup().insert(support)
-
-
-

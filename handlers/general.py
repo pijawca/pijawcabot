@@ -276,7 +276,6 @@ async def develop_set(message: types.Message, state: FSMContext):
         await state.finish()
 
 
-
 def register_handlers_commands(dp: Dispatcher):
     dp.register_message_handler(start, Text(equals=['/start', '🔃 Обновить']))
     dp.register_message_handler(news, Text(equals=['/news', '📰 Новости']))

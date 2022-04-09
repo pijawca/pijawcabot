@@ -79,12 +79,6 @@ async def status_bot(message: types.Message):
         await bot.send_message(
             chat_id=message.chat.id,
             text=f'〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️\n'
-                  f'💻 @radiophonebot\n'
-                  f'#️⃣ <code>5228167605:AAHgEzuC80jt2EMWn6owB96YtbDMsP-e0K4</code>\n\n'
-                  f'💻 @showmehidebot\n'
-                  f'#️⃣ <code>2079326037:AAE4x1tE58fyCDHQjyjGPaOZ1EYHRxl2jpY</code>\n\n'
-                  f'💻 @test_pijawcabot\n'
-                  f'#️⃣ <code>2078270004:AAEIbZcpLyPpCge3x6wILYh5b2odZ9LrL2w</code>\n'
                   f'〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️〰️',
             parse_mode=types.ParseMode.HTML
         )

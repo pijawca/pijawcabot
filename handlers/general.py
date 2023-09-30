@@ -6,7 +6,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram import types
 from misc import bot, dp
 from config import PING, DB_NAME, DB_USER, DB_PORT, DB_HOST, DB_PASSWORD
-from handlers.keyboard import kb_client, kb_support, kb_admin, kb_ping
+from handlers.keyboard import kb_client, kb_support, kb_admin, kb_ping, kb_bots
 from os import system
 from db import check_admins, search_userids
 import psycopg
@@ -61,47 +61,95 @@ async def admin(message: types.Message):
             sticker=r'CAACAgIAAxkBAAEJtMtks8sbeOwMwVjhgqs7oqsyn3oyQQACbBQAAqhl2Unugzno4GtRUy8E')
         
 async def ping(message: types.Message):
-    await bot.send_message(
+    if message.chat.id == check_admins():
+        await bot.send_message(
+                chat_id=message.chat.id,
+                text=f'Вы вошли в 🟢 Пингование',
+                reply_markup=kb_ping)
+    else:
+        await bot.send_message(
             chat_id=message.chat.id,
-            text=f'Вы вошли в 🟢 Пингование',
-            reply_markup=kb_ping)
+            text='Нет доступа')
+        
+        await bot.send_sticker(
+            chat_id=message.chat.id,
+            sticker=r'CAACAgIAAxkBAAEJtMtks8sbeOwMwVjhgqs7oqsyn3oyQQACbBQAAqhl2Unugzno4GtRUy8E')
+
 
 async def ping_n1(message: types.Message):
-    system(f'ping -c 1 {PING[0]} > temp')
-    with open("temp") as f:
-        pinglog = f.read()
-    await bot.send_message(
-        chat_id=message.chat.id,
-        text=f'{pinglog}',
-        parse_mode='HTML'
-    )
+    if message.chat.id == check_admins():
+        system(f'ping -c 1 {PING[0]} > temp')
+        with open("temp") as f:
+            pinglog = f.read()
+        await bot.send_message(
+            chat_id=message.chat.id,
+            text=f'{pinglog}',
+            parse_mode='HTML'
+        )
+    else:
+        await bot.send_message(
+            chat_id=message.chat.id,
+            text='Нет доступа')
+        
+        await bot.send_sticker(
+            chat_id=message.chat.id,
+            sticker=r'CAACAgIAAxkBAAEJtMtks8sbeOwMwVjhgqs7oqsyn3oyQQACbBQAAqhl2Unugzno4GtRUy8E')
+
     
 async def ping_n2(message: types.Message):
-    system(f'ping -c 1 {PING[0]} > temp')
-    with open("temp") as f:
-        pinglog = f.read()
-    await bot.send_message(
-        chat_id=message.chat.id,
-        text=f'{pinglog}',
-        parse_mode='HTML'
-    )
+    if message.chat.id == check_admins():
+        system(f'ping -c 1 {PING[0]} > temp')
+        with open("temp") as f:
+            pinglog = f.read()
+        await bot.send_message(
+            chat_id=message.chat.id,
+            text=f'{pinglog}',
+            parse_mode='HTML'
+        )
+    else:
+        await bot.send_message(
+            chat_id=message.chat.id,
+            text='Нет доступа')
+        
+        await bot.send_sticker(
+            chat_id=message.chat.id,
+            sticker=r'CAACAgIAAxkBAAEJtMtks8sbeOwMwVjhgqs7oqsyn3oyQQACbBQAAqhl2Unugzno4GtRUy8E')
+
     
 async def ping_n3(message: types.Message):
-    system(f'ping -c 1 {PING[0]} > temp')
-    with open("temp") as f:
-        pinglog = f.read()
-    await bot.send_message(
-        chat_id=message.chat.id,
-        text=f'{pinglog}',
-        parse_mode='HTML'
-    )
+    if message.chat.id == check_admins():
+        system(f'ping -c 1 {PING[0]} > temp')
+        with open("temp") as f:
+            pinglog = f.read()
+        await bot.send_message(
+            chat_id=message.chat.id,
+            text=f'{pinglog}',
+            parse_mode='HTML'
+        )
+    else:
+        await bot.send_message(
+            chat_id=message.chat.id,
+            text='Нет доступа')
+        
+        await bot.send_sticker(
+            chat_id=message.chat.id,
+            sticker=r'CAACAgIAAxkBAAEJtMtks8sbeOwMwVjhgqs7oqsyn3oyQQACbBQAAqhl2Unugzno4GtRUy8E')
 
 async def attention(message: types.Message):
-    await bot.send_message(
-        chat_id=message.chat.id,
-        text=f'Кому пишем?',
-        reply_markup=kb_attention
-    )        
+    if message.chat.id == check_admins():
+        await bot.send_message(
+            chat_id=message.chat.id,
+            text=f'Кому пишем?',
+            reply_markup=kb_attention
+        )       
+    else:
+        await bot.send_message(
+            chat_id=message.chat.id,
+            text='Нет доступа')
+        
+        await bot.send_sticker(
+            chat_id=message.chat.id,
+            sticker=r'CAACAgIAAxkBAAEJtMtks8sbeOwMwVjhgqs7oqsyn3oyQQACbBQAAqhl2Unugzno4GtRUy8E') 
 
 @dp.message_handler(state=UserState.att)
 async def att(message: types.Message, state: FSMContext):
@@ -118,11 +166,21 @@ async def att(message: types.Message, state: FSMContext):
     await state.finish()
 
 async def att_set(message: types.Message):
-    if message.chat.id == search_userids():
+    if message.chat.id == check_admins():
+        if message.chat.id == search_userids():
+            await bot.send_message(
+                chat_id=message.chat.id,
+                text='Введите текст')
+            await UserState.att.set()
+    else:
         await bot.send_message(
             chat_id=message.chat.id,
-            text='Введите текст')
-        await UserState.att.set()
+            text='Нет доступа')
+        
+        await bot.send_sticker(
+            chat_id=message.chat.id,
+            sticker=r'CAACAgIAAxkBAAEJtMtks8sbeOwMwVjhgqs7oqsyn3oyQQACbBQAAqhl2Unugzno4GtRUy8E')
+
 
 async def pay(message: types.Message):
     await bot.send_message(
@@ -133,7 +191,8 @@ async def pay(message: types.Message):
 async def bots(message: types.Message):
     await bot.send_message(
         chat_id=message.chat.id,
-        text=f'Временно не работает'
+        text=f'Для использования нажмите на никнейм бота',
+        reply_markup=kb_bots
         )
 
 async def support(message: types.Message):
@@ -146,6 +205,11 @@ async def support(message: types.Message):
         video=r'https://s9.gifyu.com/images/animation042e91e4ca542b38.gif'
         )
 
+@dp.callback_query_handler(lambda c: c.data == 'mycalibribot')
+async def mycalibribot(callback_query: types.CallbackQuery,):
+    await bot.send_message(chat_id = callback_query.from_user.id,
+                           text=f'@mycalibribot\n\n*Описание:*\nБот с санкционными софтом с быстрым доступом к ним\n\n[*Код в открытом доступе на GitHub*](https://github\.com/pijawca/mycalibribot)\n')
+
 def register_handlers_commands(dp: Dispatcher):
     dp.register_message_handler(start, Text(equals=['/start']))
     dp.register_message_handler(admin, Text(equals=['/admin', '/adm', '⚙️ Администрирование']))
@@ -156,7 +220,7 @@ def register_handlers_commands(dp: Dispatcher):
     dp.register_message_handler(attention, Text(equals=['/attention', '/att', '🔤 Написать']))
     dp.register_message_handler(att_set, Text(equals=['/attention_all', '/att_all', '🔤 Написать всем']))
     dp.register_message_handler(pay, Text(equals=['/payment', '/pay', '💵 Оплата услуг']))
-    dp.register_message_handler(bots, Text(equals=['/bots', '/bots', '💎 Список ботов']))
+    dp.register_message_handler(bots, Text(equals=['/bots', '💎 Список ботов']))
     dp.register_message_handler(support, Text(equals=['/support', '💌 Связаться']))
     dp.register_message_handler(back, Text(equals=['/back', 'Назад']))
     

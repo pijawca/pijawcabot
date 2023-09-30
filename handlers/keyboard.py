@@ -23,5 +23,8 @@ kb_ping.insert(p1).insert(p2).insert(p3).add(back)
 kb_client = ReplyKeyboardMarkup(resize_keyboard=True)
 kb_client.add(c1).insert(c3).add(c2).add(support)
 
-
 kb_support = InlineKeyboardMarkup().insert(support)
+
+kb_bots = InlineKeyboardMarkup()
+mycalibribot = InlineKeyboardButton("@mycalibribot", callback_data='mycalibribot')
+kb_bots.add(mycalibribot)

@@ -9,7 +9,7 @@ import logging
 
 # вывод в консоль
 logging.basicConfig(format=u'%(filename)+13s [ LINE:%(lineno)-4s] %(levelname)-8s [%(asctime)s] %(message)s',
-                    level=logging.INFO)
+                    level=logging.DEBUG)
 
 
 bot = Bot(token=TOKEN, parse_mode=types.ParseMode.MARKDOWN_V2)
